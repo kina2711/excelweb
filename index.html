@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Thực Hành Excel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .content {
+            padding: 30px;
+        }
+        .step-card {
+            background: #f8f9fa;
+            border-left: 5px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .formula-box {
+            background: #e8f5e8;
+            border: 1px solid #28a745;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #56ab2f, #a8e6cf);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            position: relative;
+            padding-left: 40px;
+        }
+        .checklist li::before {
+            content: "☐";
+            position: absolute;
+            left: 15px;
+            font-size: 18px;
+            color: #6c757d;
+        }
+        .checklist li.completed::before {
+            content: "✅";
+        }
+        .tabs {
+            display: flex;
+            background: #f1f3f4;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: none;
+            background: transparent;
+        }
+        .tab.active {
+            background: #007bff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .difficulty {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .difficulty.easy { background: #d4edda; color: #155724; }
+        .difficulty.medium { background: #fff3cd; color: #856404; }
+        .difficulty.hard { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 EXCEL MASTERY LAB</h1>
+            <p>Thực hành 16 hàm tính toán nâng cao + Dashboard Analytics</p>
+        </div>
+        
+        <div class="content">
+            <div class="warning">
+                <strong>⚠️ CHUẨN BỊ TRƯỚC KHI BẮT ĐẦU:</strong><br>
+                • Mở file <code>data_b2.xlsx</code><br>
+                • Đảm bảo sử dụng Excel 365/2021 (cho XLOOKUP, FILTER)<br>
+                • Tạo sẵn 4 sheet: CrossTab, Dashboard, Exercises, Answers
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <p id="progressText">Tiến độ: 0/50 bài tập hoàn thành</p>
+
+            <div class="tabs">
+                <button class="tab active" onclick="openTab(event, 'basic')">Bài Tập Cơ Bản</button>
+                <button class="tab" onclick="openTab(event, 'crosstab')">Cross-Tab</button>
+                <button class="tab" onclick="openTab(event, 'dashboard')">Dashboard</button>
+                <button class="tab" onclick="openTab(event, 'advanced')">Nâng Cao</button>
+            </div>
+
+            <div id="basic" class="tab-content active">
+                <h2>📊 32 BÀI TẬP CƠ BẢN (2 bài/hàm)</h2>
+                
+                <div class="step-card">
+                    <div class="difficulty easy">Dễ</div>
+                    <h3><span class="step-number">1</span>SUMPRODUCT - Nhân và Tổng Có Điều Kiện</h3>
+                    
+                    <p><strong>Bài 1.1:</strong> Tổng doanh thu Product1 ở North</p>
+                    <div class="formula-box">
+                        Ô Z1: =SUMPRODUCT((A2:A2001="North")*(B2:B2001="Product1")*F2:F2001)
+                    </div>
+                    
+                    <p><strong>Bài 1.2:</strong> Tổng số lượng bán Product2 ở East</p>
+                    <div class="formula-box">
+                        Ô Z2: =SUMPRODUCT((A2:A2001="East")*(B2:B2001="Product2")*E2:E2001)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li id="task1-1">Hoàn thành bài 1.1</li>
+                        <li id="task1-2">Hoàn thành bài 1.2</li>
+                        <li id="task1-3">Kiểm tra kết quả bằng F9</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="difficulty easy">Dễ</div>
+                    <h3><span class="step-number">2</span>SUBTOTAL - Tính Toán Với Bộ Lọc</h3>
+                    
+                    <p><strong>Bài 2.1:</strong> Tổng SalesAmount sau khi lọc</p>
+                    <div class="formula-box">
+                        1. Chọn Data → Filter<br>
+                        2. Lọc Region = "North"<br>
+                        3. Ô Z3: =SUBTOTAL(9,F2:F2001)
+                    </div>
+                    
+                    <p><strong>Bài 2.2:</strong> Trung bình UnitsSold khi lọc Product3</p>
+                    <div class="formula-box">
+                        Ô Z4: =SUBTOTAL(1,E2:E2001)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li id="task2-1">Áp dụng Filter cho dữ liệu</li>
+                        <li id="task2-2">Hoàn thành bài 2.1</li>
+                        <li id="task2-3">Hoàn thành bài 2.2</li>
+                        <li id="task2-4">Quan sát thay đổi khi đổi bộ lọc</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="difficulty medium">Trung bình</div>
+                    <h3><span class="step-number">3</span>AGGREGATE - Tính Toán Bỏ Qua Lỗi</h3>
+                    
+                    <p><strong>Bài 3.1:</strong> Tổng SalesAmount, bỏ qua lỗi và hàng ẩn</p>
+                    <div class="formula-box">
+                        Ô Z5: =AGGREGATE(9,6,F2:F2001)
+                    </div>
+                    
+                    <p><strong>Bài 3.2:</strong> Giá trị tối đa UnitsSold, bỏ qua hàng ẩn</p>
+                    <div class="formula-box">
+                        Ô Z6: =AGGREGATE(4,5,E2:E2001)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li id="task3-1">Hiểu ý nghĩa tham số options (6 = bỏ qua lỗi + hàng ẩn)</li>
+                        <li id="task3-2">Hoàn thành bài 3.1</li>
+                        <li id="task3-3">Hoàn thành bài 3.2</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="difficulty easy">Dễ</div>
+                    <h3><span class="step-number">4</span>MEDIAN & MODE.SNGL - Thống Kê Mô Tả</h3>
+                    
+                    <p><strong>Bài 4.1:</strong> Trung vị SalesAmount</p>
+                    <div class="formula-box">
+                        Ô Z7: =MEDIAN(F2:F2001)
+                    </div>
+                    
+                    <p><strong>Bài 4.2:</strong> Giá trị xuất hiện nhiều nhất trong UnitsSold</p>
+                    <div class="formula-box">
+                        Ô Z8: =MODE.SNGL(E2:E2001)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li id="task4-1">Hoàn thành bài 4.1</li>
+                        <li id="task4-2">Hoàn thành bài 4.2</li>
+                        <li id="task4-3">So sánh với AVERAGE để hiểu sự khác biệt</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="difficulty medium">Trung bình</div>
+                    <h3><span class="step-number">5</span>QUARTILE.INC - Tứ Phân Vị</h3>
+                    
+                    <p><strong>Bài 5.1:</strong> Q1 của SalesAmount</p>
+                    <div class="formula-box">
+                        Ô Z9: =QUARTILE.INC(F2:F2001,1)
+                    </div>
+                    
+                    <p><strong>Bài 5.2:</strong> Q3 của UnitsSold</p>
+                    <div class="formula-box">
+                        Ô Z10: =QUARTILE.INC(E2:E2001,3)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li id="task5-1">Hiểu ý nghĩa các tham số quart (0=min, 1=Q1, 2=median, 3=Q3, 4=max)</li>
+                        <li id="task5-2">Hoàn thành bài 5.1</li>
+                        <li id="task5-3">Hoàn thành bài 5.2</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>💡 MẸO THỰC HÀNH:</strong><br>
+                    • Sử dụng F9 để kiểm tra từng phần công thức<br>
+                    • Dùng Formulas → Evaluate Formula để debug<br>
+                    • Ctrl+Shift+Enter cho công thức mảng (nếu cần)<br>
+                    • Đặt tên ô để dễ theo dõi (Ctrl+F3)
+                </div>
+
+                <p style="text-align: center; margin-top: 30px;">
+                    <button onclick="showMore()" style="background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px;">
+                        📋 Xem Tất Cả 32 Bài Tập
+                    </button>
+                </p>
+            </div>
+
+            <div id="crosstab" class="tab-content">
+                <h2>📈 BẢNG CROSS-TAB (20+ CHỈ SỐ)</h2>
+                
+                <div class="step-card">
+                    <h3><span class="step-number">1</span>Thiết Lập Cấu Trúc</h3>
+                    
+                    <p>Tạo sheet "CrossTab" với cấu trúc:</p>
+                    <div class="formula-box">
+                        A1: (trống) | B1:K1: Product1, Product2, ..., Product10<br>
+                        A2: North   | B2:K2: [Các chỉ số]<br>
+                        A3: East    | B3:K3: [Các chỉ số]<br>
+                        A4: West    | B4:K4: [Các chỉ số]<br>
+                        A5: South   | B5:K5: [Các chỉ số]
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Tạo sheet "CrossTab"</li>
+                        <li>Nhập tiêu đề Region (A2:A5)</li>
+                        <li>Nhập tiêu đề Product (B1:K1)</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3><span class="step-number">2</span>20 Chỉ Số Phân Tích</h3>
+                    
+                    <p><strong>Nhóm 1-5: Chỉ số cơ bản</strong></p>
+                    <div class="formula-box">
+                        1. Tổng giao dịch: =COUNTIFS($A$2:$A$2001,$A2,$B$2:$B$2001,B$1)<br>
+                        2. Tổng doanh thu: =SUMIFS($F$2:$F$2001,$A$2:$A$2001,$A2,$B$2:$B$2001,B$1)<br>
+                        3. Trung bình doanh thu: =AVERAGEIFS($F$2:$F$2001,$A$2:$A$2001,$A2,$B$2:$B$2001,B$1)<br>
+                        4. Tổng số lượng: =SUMIFS($E$2:$E$2001,$A$2:$A$2001,$A2,$B$2:$B$2001,B$1)<br>
+                        5. Trung bình số lượng: =AVERAGEIFS($E$2:$E$2001,$A$2:$A$2001,$A2,$B$2:$B$2001,B$1)
+                    </div>
+                    
+                    <p><strong>Nhóm 6-10: Chỉ số nâng cao</strong></p>
+                    <div class="formula-box">
+                        6. Tỷ lệ giao dịch >5000: =SUMPRODUCT(($A$2:$A$2001=$A2)*($B$2:$B$2001=B$1)*($F$2:$F$2001>5000))/COUNTIFS($A$2:$A$2001,$A2,$B$2:$B$2001,B$1)<br>
+                        7. Max doanh thu: =AGGREGATE(4,6,($A$2:$A$2001=$A2)*($B$2:$B$2001=B$1)*$F$2:$F$2001)<br>
+                        8. Min doanh thu: =AGGREGATE(5,6,($A$2:$A$2001=$A2)*($B$2:$B$2001=B$1)*$F$2:$F$2001)<br>
+                        9. Q1 doanh thu: =QUARTILE.INC(IF(($A$2:$A$2001=$A2)*($B$2:$B$2001=B$1),$F$2:$F$2001),1)<br>
+                        10. Q3 doanh thu: =QUARTILE.INC(IF(($A$2:$A$2001=$A2)*($B$2:$B$2001=B$1),$F$2:$F$2001),3)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Nhập 5 công thức cơ bản vào ô B2</li>
+                        <li>Copy công thức sang các ô khác trong dòng</li>
+                        <li>Copy toàn bộ dòng 2 xuống các dòng 3,4,5</li>
+                        <li>Kiểm tra tham chiếu tương đối/tuyệt đối</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="dashboard" class="tab-content">
+                <h2>🎯 DASHBOARD 25 KPI</h2>
+                
+                <div class="step-card">
+                    <h3><span class="step-number">1</span>Layout Dashboard</h3>
+                    
+                    <div class="formula-box">
+                        Sheet "Dashboard":<br>
+                        • A1:B25: Danh sách 25 KPI và giá trị<br>
+                        • D1:F15: Bảng lọc động (sử dụng FILTER)<br>
+                        • H1:O20: Khu vực biểu đồ<br>
+                        • A27:B30: Dropdown điều khiển (Region, Product, Employee, Tháng)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Tạo sheet "Dashboard"</li>
+                        <li>Thiết lập layout theo mô tả</li>
+                        <li>Tạo tiêu đề cho 25 KPI</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3><span class="step-number">2</span>25 KPI Công thức</h3>
+                    
+                    <p><strong>KPI Tổng quan (1-5):</strong></p>
+                    <div class="formula-box">
+                        B1: =SUM(F2:F2001)  [Tổng doanh thu]<br>
+                        B2: =COUNTA(F2:F2001)  [Tổng giao dịch]<br>
+                        B3: =AVERAGE(F2:F2001)  [Trung bình doanh thu/giao dịch]<br>
+                        B4: =SUM(E2:E2001)  [Tổng số lượng bán]<br>
+                        B5: =COUNTA(UNIQUE(C2:C2001))  [Số employee hoạt động]
+                    </div>
+                    
+                    <p><strong>KPI theo Region (6-9):</strong></p>
+                    <div class="formula-box">
+                        B6: =SUMIFS(F2:F2001,A2:A2001,"North")<br>
+                        B7: =SUMIFS(F2:F2001,A2:A2001,"East")<br>
+                        B8: =SUMIFS(F2:F2001,A2:A2001,"West")<br>
+                        B9: =SUMIFS(F2:F2001,A2:A2001,"South")
+                    </div>
+                    
+                    <p><strong>KPI Động với FILTER (24-25):</strong></p>
+                    <div class="formula-box">
+                        B24: =FILTER(A2:F2001,(A2:A2001=$B$27)*(B2:B2001=$B$28),"Không có dữ liệu")<br>
+                        B25: =XLOOKUP(B1,F2:F2001,C2:C2001,"Không tìm thấy")
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Nhập công thức cho KPI 1-10</li>
+                        <li>Tạo Data Validation cho ô B27, B28</li>
+                        <li>Kiểm tra công thức KPI động</li>
+                        <li>Format số cho các KPI</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <h3><span class="step-number">3</span>Biểu Đồ và Tương Tác</h3>
+                    
+                    <p>Tạo biểu đồ Bar Chart cho doanh thu theo Region:</p>
+                    <div class="formula-box">
+                        1. Chọn range B6:B9 (doanh thu 4 region)<br>
+                        2. Insert → Bar Chart<br>
+                        3. Tùy chỉnh title, colors<br>
+                        4. Đặt vào vùng H1:O20
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Tạo biểu đồ doanh thu theo Region</li>
+                        <li>Thiết lập Data Validation cho dropdown</li>
+                        <li>Kiểm tra tương tác giữa dropdown và KPI</li>
+                        <li>Áp dụng Conditional Formatting</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="advanced" class="tab-content">
+                <h2>🚀 BÀI TẬP NÂNG CAO</h2>
+                
+                <div class="step-card">
+                    <div class="difficulty hard">Khó</div>
+                    <h3><span class="step-number">A</span>Phân Tích Theo Thời Gian</h3>
+                    
+                    <p><strong>Mục tiêu:</strong> Tạo báo cáo xu hướng doanh thu theo tháng</p>
+                    
+                    <div class="formula-box">
+                        1. Tạo cột Month: =TEXT(D2,"YYYY-MM")<br>
+                        2. Pivot Table theo tháng và doanh thu<br>
+                        3. Tính tỷ lệ tăng trưởng: =(Tháng này - Tháng trước)/Tháng trước<br>
+                        4. Biểu đồ Line Chart xu hướng
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Tạo cột Month mới</li>
+                        <li>Tạo Pivot Table</li>
+                        <li>Tính tỷ lệ tăng trưởng</li>
+                        <li>Vẽ biểu đồ xu hướng</li>
+                        <li>Phân tích insight</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="difficulty hard">Khó</div>
+                    <h3><span class="step-number">B</span>Ranking và Phân Loại Employee</h3>
+                    
+                    <p><strong>Mục tiêu:</strong> Tạo bảng xếp hạng và tính bonus cho Employee</p>
+                    
+                    <div class="formula-box">
+                        1. Tổng doanh thu mỗi Employee: =SUMIFS(F:F,C:C,Employee)<br>
+                        2. Ranking: =RANK.EQ(Doanh thu, Toàn bộ doanh thu, 0)<br>
+                        3. Phân loại: =IFS(Doanh thu>100000000,"Xuất sắc",Doanh thu>50000000,"Tốt",TRUE,"Cần cải thiện")<br>
+                        4. Bonus: =IFS(Doanh thu>100000000,Doanh thu*0.1,Doanh thu>50000000,Doanh thu*0.05,TRUE,Doanh thu*0.02)
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Tạo bảng tổng hợp Employee</li>
+                        <li>Tính tổng doanh thu cho mỗi Employee</li>
+                        <li>Xếp hạng Employee</li>
+                        <li>Phân loại hiệu suất</li>
+                        <li>Tính bonus theo công thức</li>
+                        <li>Tạo Top 10 chart</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="difficulty hard">Khó</div>
+                    <h3><span class="step-number">C</span>Ma Trận BCG cho Product</h3>
+                    
+                    <p><strong>Mục tiêu:</strong> Phân loại Product theo ma trận Volume × Revenue</p>
+                    
+                    <div class="formula-box">
+                        1. Tính trung bình Volume và Revenue<br>
+                        2. Phân loại: =IFS(AND(Volume>TB_Vol,Revenue>TB_Rev),"Star",<br>
+                           AND(Volume&lt;TB_Vol,Revenue>TB_Rev),"Cash Cow",<br>
+                           AND(Volume>TB_Vol,Revenue&lt;TB_Rev),"Question Mark",<br>
+                           TRUE,"Dog")<br>
+                        3. Tạo Scatter Chart
+                    </div>
+                    
+                    <ul class="checklist">
+                        <li>Tính tổng Volume và Revenue mỗi Product</li>
+                        <li>Tính trung bình làm ngưỡng phân chia</li>
+                        <li>Phân loại Product theo BCG</li>
+                        <li>Tạo Scatter Chart</li>
+                        <li>Đề xuất chiến lược cho từng nhóm</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let completedTasks = 0;
+        const totalTasks = 50;
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabs;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tabs = document.getElementsByClassName("tab");
+            for (i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function updateProgress() {
+            const percentage = (completedTasks / totalTasks) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `Tiến độ: ${completedTasks}/${totalTasks} bài tập hoàn thành`;
+        }
+
+        function showMore() {
+            alert('📋 DANH SÁCH ĐẦY ĐỦ 32 BÀI TẬP:\n\n' +
+                  '1-2: SUMPRODUCT\n' +
+                  '3-4: SUBTOTAL\n' +
+                  '5-6: AGGREGATE\n' +
+                  '7-8: MEDIAN & MODE.SNGL\n' +
+                  '9-10: QUARTILE.INC\n' +
+                  '11-12: PERCENTILE.INC\n' +
+                  '13-14: RANK.EQ\n' +
+                  '15-16: IFS\n' +
+                  '17-18: SWITCH\n' +
+                  '19-20: IFERROR & IFNA\n' +
+                  '21-22: COUNTIFS\n' +
+                  '23-24: SUMIFS\n' +
+                  '25-26: AVERAGEIFS\n' +
+                  '27-28: XLOOKUP\n' +
+                  '29-30: XMATCH\n' +
+                  '31-32: FILTER\n\n' +
+                  'Vui lòng tham khảo bài tập chi tiết trong artifact bên trên! 🚀');
+        }
+
+        // Simulate task completion
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'LI' && e.target.classList.contains('checklist')) {
+                e.target.classList.toggle('completed');
+                if (e.target.classList.contains('completed')) {
+                    completedTasks++;
+                } else {
+                    completedTasks--;
+                }
+                updateProgress();
+            }
+        });
+
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
+</html>
