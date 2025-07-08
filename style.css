@@ -1,0 +1,96 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    font-weight: 300;
+}
+
+.content {
+    padding: 30px;
+}
+
+.step-card {
+    background: #f8f9fa;
+    border-left: 5px solid #007bff;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, #56ab2f, #a8e6cf);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.tabs {
+    display: flex;
+    background: #f1f3f4;
+    border-radius: 8px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.tab {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s;
+    border: none;
+    background: transparent;
+}
+
+.tab.active {
+    background: #007bff;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.tab-content.active {
+    display: block;
+}
